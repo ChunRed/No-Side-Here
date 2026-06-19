@@ -3,7 +3,7 @@
     <title>No-Side-Here</title>
     <link href="https://chunred.github.io/No-Side-Here/feed.xml" rel="self" />
     <link href="https://chunred.github.io/No-Side-Here" />
-    <updated>2026-06-18T23:06:53+08:00</updated>
+    <updated>2026-06-19T14:01:16+08:00</updated>
     <author>
         <name>chunhuang</name>
     </author>
@@ -252,12 +252,17 @@
 <div><div class="row justify-content-center  m-5">
     <div class=" col-12 hr_line"></div>
 </div>
+
 </div>
 
     <figure class="post__image post__image--center">
       <img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/22/001.JPG" height="4000" width="6000" alt=""  sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://chunred.github.io/No-Side-Here/media/posts/22/responsive/001-xs.JPG 300w ,https://chunred.github.io/No-Side-Here/media/posts/22/responsive/001-sm.JPG 480w ,https://chunred.github.io/No-Side-Here/media/posts/22/responsive/001-md.JPG 768w ,https://chunred.github.io/No-Side-Here/media/posts/22/responsive/001-lg.JPG 1024w">
       
     </figure>
+
+  <p>
+    透過拾音器捕捉環境與空間聲音和震動訊號，並將訊號經由運算放大器（Op-amp）的放大處理與基準電壓調校（Reference Voltage Calibration）。此調校機制主要用於設定系統的觸發門檻（Threshold Setting）與訊號偏置調整（DC Bias Adjustment），一方面確保微弱的聲音訊號能被精準轉譯，另一方面藉由控制靈敏度，避免環境雜訊造成誤觸，使訊號能穩定且具層次地驅動帶有鑽頭的直流電機。被訊號觸發的直流電機將於安裝的牆面上旋轉鑽頭，進行破壞牆面與空間的動作。
+  </p>
 <div><div class="row justify-content-center p-3">
     <div class=" col-12 hr_line"></div>
 </div>
