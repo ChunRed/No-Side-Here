@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang="en-gb"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>無感滯留｜Insensible Retention   - No-Side-Here</title><meta name="description" content="Just because we&hellip;"><meta name="generator" content="Publii Open-Source CMS for Static Site"><link rel="canonical" href="https://chunred.github.io/No-Side-Here/pop-moon-7.html"><link rel="alternate" type="application/atom+xml" href="https://chunred.github.io/No-Side-Here/feed.xml" title="No-Side-Here - RSS"><link rel="alternate" type="application/json" href="https://chunred.github.io/No-Side-Here/feed.json" title="No-Side-Here - JSON"><meta property="og:title" content="無感滯留｜Insensible Retention   - No-Side-Here "><meta property="og:image" content="https://chunred.github.io/No-Side-Here/media/posts/24/IMG_9954.JPG"><meta property="og:image:width" content="4000"><meta property="og:image:height" content="6000"><meta property="og:site_name" content="No-Side-Here"><meta property="og:description" content="Just because we&hellip;"><meta property="og:url" content="https://chunred.github.io/No-Side-Here/pop-moon-7.html"><meta property="og:type" content="article"><link rel="stylesheet" href="https://chunred.github.io/No-Side-Here/assets/css/style.css?v=4103aa143eacd79cd4cf7de247fa6300"><link rel="stylesheet" href="https://chunred.github.io/No-Side-Here/assets/css/photoswipe.css?v=da6e9be0fa855edd3610e97c1d4e38d9"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://chunred.github.io/No-Side-Here/pop-moon-7.html"},"headline":"無感滯留｜Insensible Retention  ","datePublished":"2026-06-21T14:29+08:00","dateModified":"2026-06-21T22:09+08:00","image":{"@type":"ImageObject","url":"https://chunred.github.io/No-Side-Here/media/posts/24/IMG_9954.JPG","height":6000,"width":4000},"description":"Just because we&hellip;","author":{"@type":"Person","name":"chunhuang","url":"https://chunred.github.io/No-Side-Here/authors/chunhuang/"},"publisher":{"@type":"Organization","name":"chunhuang","logo":{"@type":"ImageObject","url":"https://chunred.github.io/No-Side-Here/media/website/Gong-Zuo-Qu-Yu-1_1-2.png","height":568,"width":568}}}</script><style>.pswp--svg .pswp__button,
+				          .pswp--svg .pswp__button--arrow--left:before,
+				          .pswp--svg .pswp__button--arrow--right:before {
+					          background-image: url(https://chunred.github.io/No-Side-Here/assets/svg/gallery-icons-light.svg);
+			              }</style><noscript><style>img[loading] {
+                    opacity: 1;
+                }</style></noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous"><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script></head><body><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script><div class="container-fluid"><div class="row"><div id="canvasParent" class="col-12 w-100" style="position:fixed; z-index:-1"></div></div></div><script>var x = 0;
+var y = 0; 
+var c_x = 0;
+var c_y = 0; 
+
+// 網格粒子系統
+let particles = [];
+const GRID_RES = 24; // 稍微調密一點點，讓點陣結構更精緻（原本是 30）
+
+function setup() {
+  var canvasParent = document.getElementById("canvasParent");
+  const canvas = createCanvas(windowWidth, windowHeight);
+  canvas.parent("canvasParent");
+  canvas.style("display", "block");
+  canvas.style("position", "fixed");
+  canvas.style("left", "0px");
+  canvas.style("top", "0px");
+  canvas.style("width", "100vw");
+  
+  initGrid();
+}
+
+function initGrid() {
+  particles = [];
+  for (let gridX = GRID_RES; gridX < width; gridX += GRID_RES) {
+    for (let gridY = GRID_RES; gridY < height; gridY += GRID_RES) {
+      particles.push(new GridParticle(gridX, gridY));
+    }
+  }
+}
+
+function draw() {
+  // 保持乾淨的白背景
+  background(255);
+  
+  // 1. 更新並繪製網格粒子
+  for (let p of particles) {
+    p.interactWithMouse();
+    p.display();
+  }
+  
+  // 2. 原本的滑鼠延遲追蹤圓圈（也將顏色調淡，使其不干擾）
+  stroke(230);
+  strokeWeight(1);
+  fill(255, 255, 255, 0);
+  
+  c_x = lerp(x, mouseX, 0.10);
+  c_y = lerp(y, mouseY, 0.10);
+  
+  x = c_x;
+  y = c_y;
+  
+  circle(x, y, 40); // 縮小一點滑鼠圓圈
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  initGrid();
+}
+
+// 網格粒子類別
+class GridParticle {
+  constructor(homeX, homeY) {
+    this.homeX = homeX;
+    this.homeY = homeY;
+    this.x = homeX;
+    this.y = homeY;
+    
+    this.shapeType = random(1) > 0.3 ? 0 : 1; // 0 = 圓形, 1 = 方形
+    this.isFilled = random(1) > 0.85; // 提高空心比例，讓畫面更乾淨
+    
+    // 【調整重點：尺寸大幅縮小】
+    // 絕大多數是 1~2px 的細小點，極少數是大一點點的圈（4~8px），適度破壞單調感
+    this.baseSize = random(1) > 0.92 ? random(2, 12) : random(3, 2.5); 
+    this.currentSize = this.baseSize;
+    
+    // 【調整重點：顏色極淡，避免干涉閱讀】
+    // 亮度拉高到 200~230（非常淡的灰色），透明度偏低
+    let gray = random(30, 200);
+    this.alpha = random(40, 100);
+    this.col = color(gray, gray, gray, this.alpha);
+    
+    // 每顆粒子有獨立的時間偏移量，創造「非同步」的呼吸感
+    this.timeOffset = random(1000);
+    this.noiseSeedX = random(1000);
+    this.noiseSeedY = random(1000);
+  }
+
+  interactWithMouse() {
+    let d = dist(mouseX, mouseY, this.homeX, this.homeY);
+    let maxDist = 150; // 縮小滑鼠影響範圍
+    
+    // 1. 【新增：平日的微幅有機漂移與非同步縮放】
+    // 使用 Perlin Noise 讓粒子在沒滑鼠時也有極其微弱的位移（0.5px 內）
+    let nX = map(noise(this.noiseSeedX + frameCount * 0.002), 0, 1, -0.4, 0.4);
+    let nY = map(noise(this.noiseSeedY + frameCount * 0.002), 0, 1, -0.4, 0.4);
+    
+    // 使用 sin 波創造慢速自主呼吸縮放效果（振幅小、速度慢）
+    let breathe = sin(frameCount * 0.05 + this.timeOffset) * (this.baseSize * 0.25);
+    let idleSize = this.baseSize + breathe;
+
+    // 2. 計算滑鼠干涉
+    if (d < maxDist && d > 0) {
+      let force = map(d, 0, maxDist, 1, 0);
+      // 滑鼠經過時，粒子產生細微的排斥位移
+      let targetX = this.homeX + (this.homeX - mouseX) * force * 0.15 + nX;
+      let targetY = this.homeY + (this.homeY - mouseY) * force * 0.15 + nY;
+      
+      this.x = lerp(this.x, targetX, 0.1);
+      this.y = lerp(this.y, targetY, 0.1);
+      
+      // 滑鼠過來時稍微放大（最大不超過原本的 1.8 倍），維持低調
+      this.currentSize = lerp(this.currentSize, idleSize * (5 + force * 5), 0.1);
+    } else {
+      // 3. 沒有滑鼠時，優雅回歸自主呼吸狀態
+      this.x = lerp(this.x, this.homeX + nX, 0.05);
+      this.y = lerp(this.y, this.homeY + nY, 0.05);
+      this.currentSize = lerp(this.currentSize, idleSize, 0.05);
+    }
+  }
+
+  display() {
+    push();
+    translate(this.x, this.y);
+    
+    if (this.isFilled) {
+      noStroke();
+      fill(this.col);
+    } else {
+      noFill();
+      stroke(this.col);
+      strokeWeight(0.5); // 極細的灰線
+    }
+    
+    if (this.shapeType === 0) {
+      ellipse(0, 0, this.currentSize);
+    } else if (this.shapeType === 1) {
+      rectMode(CENTER);
+      rect(0, 0, this.currentSize, this.currentSize);
+    }
+    pop();
+  }
+}</script><div class="container"><header class="header" id="js-header"><a href="https://chunred.github.io/No-Side-Here/" class="logo"><img src="https://chunred.github.io/No-Side-Here/media/website/Gong-Zuo-Qu-Yu-1_1-2.png" alt="No-Side-Here" width="568" height="568"></a><nav class="navbar js-navbar"><button class="navbar__toggle js-toggle" aria-label="Menu"><span class="navbar__toggle-box"><span class="navbar__toggle-inner">Menu</span></span></button><ul class="navbar__menu"><li><a href="https://chunred.github.io/No-Side-Here/" target="_self">Project</a></li><li><a href="https://chunred.github.io/No-Side-Here/people.html" target="_self">Member . . .</a></li></ul></nav></header><main><article class="post wrapper"><header class="hero"><h1 class="post__title">無感滯留｜Insensible Retention  </h1></header><figure class="post__featured-image post__image--normal"><img src="https://chunred.github.io/No-Side-Here/media/posts/24/IMG_9954.JPG" srcset="https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-xs.JPG 300w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-sm.JPG 480w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-md.JPG 768w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-lg.JPG 1024w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-xl.JPG 1360w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-2xl.JPG 1600w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9954-sm2.JPG 375w" sizes="(max-width: 1600px) 100vw, 1600px" loading="eager" height="6000" width="4000" alt=""></figure><div class="post__entry"><p>Just because we do not notice something does not mean it did not happen. It is like how we always live in humidity, temperature, and airflow—cycles of condensation, dripping, and evaporation keep happening at the edge of our senses. Through tools, we catch these weak feelings that our bodies miss, making these changes stay so we can see them.</p><p>“Insensible Retention” keeps turning moisture from the air into water drops, trying to show how tiny changes can build up into something we can feel. Even though the water drops will eventually dry up and go back into the air, the machine gives them a short moment to be noticed.<br></p><div><div class="row justify-content-center m-5"><div class="col-12 hr_line"></div></div></div><p>未曾意識到的事物，不代表它未曾發生。如同人始終浸泡於濕度、溫度與氣流之中，一次次凝結、滴落，再蒸發，不斷在感知的邊界發生。我們藉由工具，攔截那些被身體忽略的微弱感知，使原本無感的變化得以滯留。<br>作品不斷凝結空氣中的水氣，嘗試製造將極微小的狀態匯聚至有感的過程。水滴終將蒸發回到空氣中，卻得以在作品機制中短暫被感知。<br></p><div><div class="row justify-content-center m-5"><div class="col-12 hr_line"></div></div></div><figure class="post__image post__image--center"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/IMG_9950-2.JPG" height="4000" width="6000" alt="" sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9950-2-xs.JPG 300w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9950-2-sm.JPG 480w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9950-2-md.JPG 768w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/IMG_9950-2-lg.JPG 1024w"></figure><div><div class="row justify-content-center p-3"><div class="col-12 hr_line"></div></div></div><figure class="post__image post__image--center"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/Frame-55.png" height="2023" width="3712" alt="" sizes="(max-width: 1024px) 100vw, 1024px" srcset="https://chunred.github.io/No-Side-Here/media/posts/24/responsive/Frame-55-xs.png 300w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/Frame-55-sm.png 480w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/Frame-55-md.png 768w, https://chunred.github.io/No-Side-Here/media/posts/24/responsive/Frame-55-lg.png 1024w"></figure><div><div class="row justify-content-center p-3"><div class="col-12 hr_line"></div></div></div><div class="gallery-wrapper"><div class="gallery" data-columns="3"><figure class="gallery__item"><a href="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9951.JPG" data-size="6000x4000"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9951-thumbnail.JPG" height="512" width="768" alt=""></a></figure><figure class="gallery__item"><a href="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9959.JPG" data-size="6000x4000"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9959-thumbnail.JPG" height="512" width="768" alt=""></a></figure><figure class="gallery__item"><a href="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9960.JPG" data-size="6000x4000"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9960-thumbnail.JPG" height="512" width="768" alt=""></a></figure><figure class="gallery__item"><a href="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9964.JPG" data-size="6000x4000"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9964-thumbnail.JPG" height="512" width="768" alt=""></a></figure><figure class="gallery__item"><a href="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9971.JPG" data-size="6000x4000"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9971-thumbnail.JPG" height="512" width="768" alt=""></a></figure><figure class="gallery__item"><a href="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9972.JPG" data-size="6000x4000"><img loading="lazy" src="https://chunred.github.io/No-Side-Here/media/posts/24/gallery/IMG_9972-thumbnail.JPG" height="512" width="768" alt=""></a></figure></div></div><div><div class="row justify-content-center p-3"><div class="col-12 hr_line"></div></div></div><div><link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><div class="container"><div class="row mt-5 justify-content-center"><div class="col-12"><a href="https://chunred.github.io/No-Side-Here/" type="button" class="btn btn-back btn-outline-dark w-100" style="height: 5vh"><div class="btn-back-text text-center w-100 h5">home<div class="btn-back-icon fa fa-home" style="margin-left:10px"></div></div></a></div></div></div></div><p></p></div></article></main><footer class="footer"><div class="footer__copyright">無邊製作｜No Side Here</div></footer></div><script defer="defer" src="https://chunred.github.io/No-Side-Here/assets/js/scripts.min.js?v=620157e86bfc246cfef480b1b4aadb48"></script><script>window.publiiThemeMenuConfig={mobileMenuMode:'overlay',animationSpeed:300,submenuWidth: 'auto',doubleClickTime:500,mobileMenuExpandableSubmenus:false,relatedContainerForOverlayMenuSelector:'.navbar'};</script><script>/*<![CDATA[*/var images=document.querySelectorAll("img[loading]");for(var i=0;i<images.length;i++){if(images[i].complete){images[i].classList.add("is-loaded")}else{images[i].addEventListener("load",function(){this.classList.add("is-loaded")},false)}};/*]]>*/</script><script defer="defer" src="https://chunred.github.io/No-Side-Here/assets/js/photoswipe.min.js?v=017385b552f7e0d979e2e2fe6f324015"></script><script defer="defer" src="https://chunred.github.io/No-Side-Here/assets/js/photoswipe-ui-default.min.js?v=d067f0883540b1ddda0e2c9ad1b14260"></script><script>var initPhotoSwipeFromDOM=function(gallerySelector){var parseThumbnailElements=function(el){var thumbElements=el.childNodes,numNodes=thumbElements.length,items=[],figureEl,linkEl,size,item;for(var i=0;i<numNodes;i++){figureEl=thumbElements[i];if(figureEl.nodeType!==1){continue;}
+          linkEl=figureEl.children[0];size=linkEl.getAttribute('data-size').split('x');item={src:linkEl.getAttribute('href'),w:parseInt(size[0],10),h:parseInt(size[1],10)};if(figureEl.children.length>1){item.title=figureEl.children[1].innerHTML;}
+          if(linkEl.children.length>0){item.msrc=linkEl.children[0].getAttribute('src');}
+          item.el=figureEl;items.push(item);}
+          return items;};var closest=function closest(el,fn){return el&&(fn(el)?el:closest(el.parentNode,fn));};var onThumbnailsClick=function(e){e=e||window.event;e.preventDefault?e.preventDefault():e.returnValue=false;var eTarget=e.target||e.srcElement;var clickedListItem=closest(eTarget,function(el){return(el.tagName&&el.tagName.toUpperCase()==='FIGURE');});if(!clickedListItem){return;}
+          var clickedGallery=clickedListItem.parentNode,childNodes=clickedListItem.parentNode.childNodes,numChildNodes=childNodes.length,nodeIndex=0,index;for(var i=0;i<numChildNodes;i++){if(childNodes[i].nodeType!==1){continue;}
+          if(childNodes[i]===clickedListItem){index=nodeIndex;break;}
+          nodeIndex++;}
+          if(index>=0){openPhotoSwipe(index,clickedGallery);}
+          return false;};var photoswipeParseHash=function(){var hash=window.location.hash.substring(1),params={};if(hash.length<5){return params;}
+          var vars=hash.split('&');for(var i=0;i<vars.length;i++){if(!vars[i]){continue;}
+          var pair=vars[i].split('=');if(pair.length<2){continue;}
+          params[pair[0]]=pair[1];}
+          if(params.gid){params.gid=parseInt(params.gid,10);}
+          return params;};var openPhotoSwipe=function(index,galleryElement,disableAnimation,fromURL){var pswpElement=document.querySelectorAll('.pswp')[0],gallery,options,items;items=parseThumbnailElements(galleryElement);options={galleryUID:galleryElement.getAttribute('data-pswp-uid'),getThumbBoundsFn:function(index){var thumbnail=items[index].el.getElementsByTagName('img')[0],pageYScroll=window.pageYOffset||document.documentElement.scrollTop,rect=thumbnail.getBoundingClientRect();return{x:rect.left,y:rect.top+pageYScroll,w:rect.width};},
+          mainClass:'pswp--dark',
+          preload: [1,2],
+          hideAnimationDuration:200,
+          showAnimationDuration:0,
+          bgOpacity: 0.7,
+          showHideOpacity:true,
+          closeOnScroll: true,
+          arrowKeys: true,
+          closeEl: true,
+          captionEl: true,
+          fullscreenEl: true,
+          zoomEl: true,
+          shareEl: true,
+          counterEl: true,
+          arrowEl: true,
+          preloaderEl: true
+          };if(fromURL){if(options.galleryPIDs){for(var j=0;j<items.length;j++){if(items[j].pid==index){options.index=j;break;}}}else{options.index=parseInt(index,10)-1;}}else{options.index=parseInt(index,10);}
+          if(isNaN(options.index)){return;}
+          if(disableAnimation){options.showAnimationDuration=0;}
+          gallery=new PhotoSwipe(pswpElement,PhotoSwipeUI_Default,items,options);gallery.init();gallery.options.escKey=true;};var galleryElements=document.querySelectorAll(gallerySelector);for(var i=0,l=galleryElements.length;i<l;i++){galleryElements[i].setAttribute('data-pswp-uid',i+1);galleryElements[i].onclick=onThumbnailsClick;}
+          var hashData=photoswipeParseHash();if(hashData.pid&&hashData.gid){openPhotoSwipe(hashData.pid,galleryElements[hashData.gid-1],true,true);}};window.addEventListener('load', function () {initPhotoSwipeFromDOM('.gallery');}, false);</script><div class="pswp" tabindex="-1" role="dialog" aria-hidden="true"><div class="pswp__bg"></div><div class="pswp__scroll-wrap"><div class="pswp__container"><div class="pswp__item"></div><div class="pswp__item"></div><div class="pswp__item"></div></div><div class="pswp__ui pswp__ui--hidden"><div class="pswp__top-bar"><div class="pswp__counter"></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button><button class="pswp__button pswp__button--share" title="Share"></button><button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button><button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class="pswp__preloader"><div class="pswp__preloader__icn"><div class="pswp__preloader__cut"><div class="pswp__preloader__donut"></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class="pswp__share-tooltip"></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button><button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class="pswp__caption"><div class="pswp__caption__center"></div></div></div></div></div></body></html>
